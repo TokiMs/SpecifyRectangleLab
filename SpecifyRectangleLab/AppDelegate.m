@@ -7,16 +7,22 @@
 //
 
 #import "AppDelegate.h"
+#import "BRCustomView.h"
 
 @interface AppDelegate ()
 @property (nonatomic, weak) IBOutlet NSWindow * window;
+@property (nonatomic, weak) IBOutlet BRCustomView * originalImageView;
+@property (nonatomic, weak) IBOutlet BRCustomView * croppedImageView;
 @end
 
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
+    self.originalImageView.backgroundColor = [NSColor grayColor];
+    self.croppedImageView.backgroundColor = [NSColor grayColor];
     
+    [self.window display];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)notification

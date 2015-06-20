@@ -13,6 +13,8 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
+                <outlet property="croppedImageView" destination="oMW-cg-W8h" id="fnn-pr-8wX"/>
+                <outlet property="originalImageView" destination="dXJ-RM-V9j" id="LNn-so-DED"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -675,10 +677,10 @@
                 <rect key="frame" x="0.0" y="0.0" width="480" height="360"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="dXJ-RM-V9j">
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="dXJ-RM-V9j" customClass="BRCustomView">
                         <rect key="frame" x="20" y="20" width="216" height="320"/>
                     </customView>
-                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="oMW-cg-W8h">
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="oMW-cg-W8h" customClass="BRCustomView">
                         <rect key="frame" x="244" y="20" width="216" height="320"/>
                     </customView>
                 </subviews>
