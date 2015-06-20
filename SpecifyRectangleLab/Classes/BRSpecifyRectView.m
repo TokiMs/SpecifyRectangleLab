@@ -21,7 +21,6 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.rectangle  = NSZeroRect;
         self.lineWidth  = 1.0;
         
         self.startPoint = NSZeroPoint;
@@ -30,6 +29,13 @@
 //        self.alphaValue = 0.5f;
     }
     return self;
+}
+
+#pragma mark - getter
+
+- (NSRect)rectangle
+{
+    return [self rectFromPoint:self.startPoint point:self.endPoint];
 }
 
 #pragma mark - mouse event
@@ -67,8 +73,6 @@
 - (void)drawRect:(NSRect)dirtyRect
 {
     [super drawRect:dirtyRect];
-    
-    self.rectangle = [self rectFromPoint:self.startPoint point:self.endPoint];
     
 //    NSColor * color = [NSColor colorWithCalibratedWhite:1.0f alpha:0.3f];
 //    NSColor * color = [NSColor colorWithDeviceRed:1.0f green:1.0f blue:1.0f alpha:0.5f];
