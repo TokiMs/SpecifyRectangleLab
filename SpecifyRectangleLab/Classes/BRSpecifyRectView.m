@@ -72,7 +72,16 @@
     NSColor * color = [NSColor blackColor];
     [color set];
     
-    [NSBezierPath strokeRect:self.rectangle];
+    NSBezierPath * bezierPath = [NSBezierPath bezierPath];
+    // set the line dash pattern
+    CGFloat lineDash[2];
+    lineDash[0] = 10.0;
+    lineDash[1] = 5.0;
+    [bezierPath setLineDash:lineDash count:2 phase:0.0];
+    //
+    [bezierPath appendBezierPathWithRect:self.rectangle];
+    [bezierPath stroke];
+//    [NSBezierPath strokeRect:self.rectangle];
 //    NSRectFill(self.rectangle);
 }
 
