@@ -8,11 +8,14 @@
 
 #import "AppDelegate.h"
 #import "BRCustomView.h"
+#import "BRSpecifyRectView.h"
 
 @interface AppDelegate ()
 @property (nonatomic, weak) IBOutlet NSWindow * window;
 @property (nonatomic, weak) IBOutlet BRCustomView * originalImageView;
 @property (nonatomic, weak) IBOutlet BRCustomView * croppedImageView;
+
+@property (nonatomic, strong) BRSpecifyRectView * specifyRectView;
 @end
 
 @implementation AppDelegate
@@ -23,6 +26,9 @@
     self.croppedImageView.backgroundColor = [NSColor grayColor];
     
     self.originalImageView.backgroundImage = [NSImage imageNamed:@"Image.jpg"];
+    
+    self.specifyRectView = [[BRSpecifyRectView alloc] initWithFrame:self.originalImageView.frame];
+    [self.originalImageView addSubview:self.specifyRectView];
     
     [self.window display];
 }
