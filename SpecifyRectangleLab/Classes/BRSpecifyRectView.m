@@ -8,10 +8,21 @@
 
 #import "BRSpecifyRectView.h"
 
+// binding key
+NSString * const kBRSpecifyRectViewBindingRectangle     = @"rectangle";
+NSString * const kBRSpecifyRectViewBindingStartPoint    = @"startPoint";
+NSString * const kBRSpecifyRectViewBindingEndPoint      = @"endPoint";
+
+
 @interface BRSpecifyRectView ()
 @property (nonatomic, assign) NSPoint   startPoint;
 @property (nonatomic, assign) NSPoint   endPoint;
+//
+@property (nonatomic, strong) NSTrackingArea *  trackingArea;
+@property (nonatomic, assign) BOOL  mousePressed;
+@property (nonatomic, assign) BOOL  mouseEntered;
 @end
+
 
 @implementation BRSpecifyRectView
 
@@ -27,8 +38,24 @@
         self.endPoint   = NSZeroPoint;
         
 //        self.alphaValue = 0.5f;
+        
+        self.trackingArea   = nil;
+        self.mousePressed   = NO;
+        self.mouseEntered   = NO;
+        
+        // observe
+        [self addObserver:self forKeyPath:kBRSpecifyRectViewBindingRectangle options:NSKeyValueObservingOptionNew context:nil];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [self removeObserver:self forKeyPath:kBRSpecifyRectViewBindingRectangle];
+    
+#if !__has_feature(objc_arc)
+    [self dealloc];
+#endif
 }
 
 #pragma mark - getter
@@ -38,10 +65,37 @@
     return [self rectFromPoint:self.startPoint point:self.endPoint];
 }
 
+#pragma mark - KVO
+
++ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
+{
+    NSSet * keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
+    NSArray * affectingKeys;
+    
+    if ([key isEqualToString:kBRSpecifyRectViewBindingRectangle]) {
+        affectingKeys = @[kBRSpecifyRectViewBindingStartPoint, kBRSpecifyRectViewBindingEndPoint];
+    }
+    
+    return affectingKeys ? [keyPaths setByAddingObjectsFromArray:affectingKeys] : keyPaths;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == nil) {
+        if ([keyPath isEqualToString:kBRSpecifyRectViewBindingRectangle]) {
+            [self updateTrackingAreas];
+        }
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
 #pragma mark - mouse event
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
+    self.mousePressed = YES;
+    
     self.startPoint = [self convertPoint:theEvent.locationInWindow fromView:[[self window] contentView]];
     self.endPoint = self.startPoint;
     
@@ -52,6 +106,8 @@
 
 - (void)mouseUp:(NSEvent *)theEvent
 {
+    self.mousePressed = NO;
+    
     self.endPoint = [self convertPoint:theEvent.locationInWindow fromView:[[self window] contentView]];
     
     [self setNeedsDisplay:YES];
@@ -66,6 +122,47 @@
     [self setNeedsDisplay:YES];
     
     NSLog(@"mouseDragged: %@, %@", [NSValue valueWithPoint:self.startPoint], [NSValue valueWithPoint:self.endPoint]);
+}
+
+- (void)mouseEntered:(NSEvent *)theEvent
+{
+    self.mouseEntered = YES;
+    
+    [self setNeedsDisplay:YES];
+    
+    NSLog(@"mouseEntered:");
+}
+
+- (void)mouseExited:(NSEvent *)theEvent
+{
+    self.mouseEntered = NO;
+    
+    [self setNeedsDisplay:YES];
+    
+    NSLog(@"mouseExited:");
+}
+
+- (void)updateTrackingAreas
+{
+    // remove
+    if (self.trackingArea) {
+        [self removeTrackingArea:self.trackingArea];
+    }
+    
+    // add
+    if (self.mousePressed == NO) {
+        NSTrackingAreaOptions options = (NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingEnabledDuringMouseDrag);
+        self.trackingArea = [[NSTrackingArea alloc] initWithRect:self.rectangle
+                                                         options:options
+                                                           owner:self
+                                                        userInfo:nil];
+        [self addTrackingArea:self.trackingArea];
+    }
+}
+
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
+{
+    return YES;
 }
 
 #pragma mark - draw
