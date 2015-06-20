@@ -10,8 +10,8 @@
 
 @interface BRSpecifyRectView : NSView
 
-@property (nonatomic, assign) NSRect    rectangle;
-
 @property (nonatomic, assign) CGFloat   lineWidth;
+
+@property (nonatomic, assign, readonly) NSRect  rectangle;
 
 @end
