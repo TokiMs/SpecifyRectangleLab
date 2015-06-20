@@ -22,6 +22,8 @@
     self.originalImageView.backgroundColor = [NSColor grayColor];
     self.croppedImageView.backgroundColor = [NSColor grayColor];
     
+    self.originalImageView.backgroundImage = [NSImage imageNamed:@"Image.jpg"];
+    
     [self.window display];
 }
 
