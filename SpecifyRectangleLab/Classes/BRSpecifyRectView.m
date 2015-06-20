@@ -22,8 +22,11 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.rectangle  = NSZeroRect;
+        self.lineWidth  = 1.0;
+        
         self.startPoint = NSZeroPoint;
         self.endPoint   = NSZeroPoint;
+        
 //        self.alphaValue = 0.5f;
     }
     return self;
@@ -80,6 +83,7 @@
     [bezierPath setLineDash:lineDash count:2 phase:0.0];
     //
     [bezierPath appendBezierPathWithRect:self.rectangle];
+    [bezierPath setLineWidth:self.lineWidth];
     [bezierPath stroke];
 //    [NSBezierPath strokeRect:self.rectangle];
 //    NSRectFill(self.rectangle);

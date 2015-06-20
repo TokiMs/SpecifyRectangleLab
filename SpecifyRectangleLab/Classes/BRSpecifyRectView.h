@@ -12,4 +12,6 @@
 
 @property (nonatomic, assign) NSRect    rectangle;
 
+@property (nonatomic, assign) CGFloat   lineWidth;
+
 @end
