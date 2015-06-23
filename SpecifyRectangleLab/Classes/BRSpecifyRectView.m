@@ -13,6 +13,8 @@ NSString * const kBRSpecifyRectViewBindingRectangle     = @"rectangle";
 NSString * const kBRSpecifyRectViewBindingStartPoint    = @"startPoint";
 NSString * const kBRSpecifyRectViewBindingEndPoint      = @"endPoint";
 
+static const CGFloat kRectThickness = 3.0;
+
 
 @interface BRSpecifyRectView ()
 @property (nonatomic, assign) NSPoint   startPoint;
@@ -53,9 +55,19 @@ NSString * const kBRSpecifyRectViewBindingEndPoint      = @"endPoint";
 {
     [self removeObserver:self forKeyPath:kBRSpecifyRectViewBindingRectangle];
     
+    [self discardCursorRects];
+    
 #if !__has_feature(objc_arc)
+    self.trackingArea = nil;
     [self dealloc];
 #endif
+}
+
+#pragma mark - coordinate
+
+- (BOOL)isFlipped
+{
+    return YES;
 }
 
 #pragma mark - getter
@@ -84,6 +96,8 @@ NSString * const kBRSpecifyRectViewBindingEndPoint      = @"endPoint";
     if (context == nil) {
         if ([keyPath isEqualToString:kBRSpecifyRectViewBindingRectangle]) {
             [self updateTrackingAreas];
+            
+            [self resetCursorRects];
         }
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -163,6 +177,79 @@ NSString * const kBRSpecifyRectViewBindingEndPoint      = @"endPoint";
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
 {
     return YES;
+}
+
+#pragma mark - cursor
+
+- (void)resetCursorRects
+{
+    [self discardCursorRects];
+    [self addCursors];
+}
+
+- (void)addCursors
+{
+    NSRect rect = self.rectangle;
+    if (! NSEqualSizes(rect.size, NSZeroSize)) {
+        [self addCursorRect:[self topKnobRect:rect] cursor:[NSCursor resizeUpDownCursor]];
+        [self addCursorRect:[self buttomKnobRect:rect] cursor:[NSCursor resizeUpDownCursor]];
+        [self addCursorRect:[self leftKnobRect:rect] cursor:[NSCursor resizeLeftRightCursor]];
+        [self addCursorRect:[self rightKnobRect:rect] cursor:[NSCursor resizeLeftRightCursor]];
+        [self addCursorRect:[self topLeftKnobRect:rect] cursor:[NSCursor crosshairCursor]];
+        [self addCursorRect:[self topRightKnobRect:rect] cursor:[NSCursor crosshairCursor]];
+        [self addCursorRect:[self buttomLeftKnobRect:rect] cursor:[NSCursor crosshairCursor]];
+        [self addCursorRect:[self buttomRightKnobRect:rect] cursor:[NSCursor crosshairCursor]];
+    }
+}
+
+#pragma mark - cursor sub
+
+- (NSRect)topLeftKnobRect:(NSRect)frame
+{
+    return NSMakeRect(NSMinX(frame) - kRectThickness / 2, NSMinY(frame) - kRectThickness / 2, kRectThickness, kRectThickness);
+}
+
+- (NSRect)topRightKnobRect:(NSRect)frame
+{
+    return NSMakeRect(NSMaxX(frame) - kRectThickness / 2, NSMinY(frame) - kRectThickness / 2, kRectThickness, kRectThickness);
+}
+
+- (NSRect)buttomLeftKnobRect:(NSRect)frame
+{
+    return NSMakeRect(NSMinX(frame) - kRectThickness / 2, NSMaxY(frame) - kRectThickness / 2, kRectThickness, kRectThickness);
+}
+
+- (NSRect)buttomRightKnobRect:(NSRect)frame
+{
+    return NSMakeRect(NSMaxX(frame) - kRectThickness / 2, NSMaxY(frame) - kRectThickness / 2, kRectThickness, kRectThickness);
+}
+
+- (NSRect)topKnobRect:(NSRect)frame
+{
+    NSRect topLeftKnobRect = [self topLeftKnobRect:frame];
+    NSRect topRightKnobRect = [self topRightKnobRect:frame];
+    return NSMakeRect(NSMaxX(topLeftKnobRect), NSMinY(topLeftKnobRect), NSMinX(topRightKnobRect) - NSMaxX(topLeftKnobRect), NSHeight(topLeftKnobRect));
+}
+
+- (NSRect)buttomKnobRect:(NSRect)frame
+{
+    NSRect buttomLeftKnobRect = [self buttomLeftKnobRect:frame];
+    NSRect buttomRightKnobRect = [self buttomRightKnobRect:frame];
+    return NSMakeRect(NSMaxX(buttomLeftKnobRect), NSMinY(buttomLeftKnobRect), NSMinX(buttomRightKnobRect) - NSMaxX(buttomLeftKnobRect), NSHeight(buttomLeftKnobRect));
+}
+
+- (NSRect)leftKnobRect:(NSRect)frame
+{
+    NSRect topLeftKnobRect = [self topLeftKnobRect:frame];
+    NSRect buttomLeftKnobRect = [self buttomLeftKnobRect:frame];
+    return NSMakeRect(NSMinX(topLeftKnobRect), NSMaxY(topLeftKnobRect), NSWidth(topLeftKnobRect), NSMinY(buttomLeftKnobRect) - NSMaxY(topLeftKnobRect));
+}
+
+- (NSRect)rightKnobRect:(NSRect)frame
+{
+    NSRect topRightKnobRect = [self topRightKnobRect:frame];
+    NSRect buttomRightKnobRect = [self buttomRightKnobRect:frame];
+    return NSMakeRect(NSMinX(topRightKnobRect), NSMaxY(topRightKnobRect), NSWidth(topRightKnobRect), NSMinY(buttomRightKnobRect) - NSMaxY(topRightKnobRect));
 }
 
 #pragma mark - draw
