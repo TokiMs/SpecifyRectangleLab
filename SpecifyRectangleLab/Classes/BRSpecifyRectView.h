@@ -13,6 +13,7 @@
 @property (nonatomic, assign) CGFloat   lineWidth;
 
 @property (nonatomic, assign) BOOL      keepRectangleInsideView;
+@property (nonatomic, assign) BOOL      specifyWholeAreaIfDoubleClicked;
 
 @property (nonatomic, assign) NSRect    rectangle;
 

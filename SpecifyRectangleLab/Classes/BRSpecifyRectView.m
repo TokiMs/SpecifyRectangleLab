@@ -62,6 +62,7 @@ static const BRResizeRule rules[8] = {
         self.lineWidth  = 1.0;
         
         self.keepRectangleInsideView = YES;
+        self.specifyWholeAreaIfDoubleClicked = NO;
 //        self.alphaValue = 0.5f;
         
         self.trackingArea   = nil;
@@ -159,6 +160,10 @@ static const BRResizeRule rules[8] = {
             }
             
             NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.rectangle]);
+        }
+        
+        if (self.specifyWholeAreaIfDoubleClicked && (theEvent.type == NSLeftMouseUp) && (theEvent.clickCount == 2)) {
+            self.rectangle = self.bounds;
         }
     }
     else {
