@@ -1,5 +1,5 @@
 //
-//  BRSpecifyRectView.h
+//  BRSpecifyRectAreaView.h
 //  SpecifyRectangleLab
 //
 //  Created by Kenji TAMAKI on 6/20/15.
@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface BRSpecifyRectView : NSView
+@interface BRSpecifyRectAreaView : NSView
 
 @property (nonatomic, assign) CGFloat   lineWidth;
 @property (nonatomic, copy) NSArray *   lineColors;
@@ -17,9 +17,9 @@
 @property (nonatomic, assign) CGFloat   knobWidthInside;
 @property (nonatomic, assign) CGFloat   knobWidthOutside;
 
-@property (nonatomic, assign) BOOL      keepRectangleInsideView;
-@property (nonatomic, assign) BOOL      specifyWholeAreaIfDoubleClicked;
+@property (nonatomic, assign) BOOL      keepAreaInsideView;
+@property (nonatomic, assign) BOOL      specifyWholeBoundsIfDoubleClicked;
 
-@property (nonatomic, assign) NSRect    rectangle;
+@property (nonatomic, assign) NSRect    areaRect;
 
 @end

@@ -1,15 +1,15 @@
 //
-//  BRSpecifyRectView.m
+//  BRSpecifyRectAreaView.m
 //  SpecifyRectangleLab
 //
 //  Created by Kenji TAMAKI on 6/20/15.
 //  Copyright (c) 2015 Brother Industries, Ltd. All rights reserved.
 //
 
-#import "BRSpecifyRectView.h"
+#import "BRSpecifyRectAreaView.h"
 
 // binding key
-NSString * const kBRSpecifyRectViewBindingRectangle = @"rectangle";
+NSString * const kBRSpecifyRectAreaViewBindingAreaRect = @"areaRect";
 
 // knob type
 typedef NS_ENUM(NSInteger, BRKnobType) {
@@ -41,13 +41,13 @@ static const BRResizeRule rules[8] = {
 };
 
 
-@interface BRSpecifyRectView ()
+@interface BRSpecifyRectAreaView ()
 @property (nonatomic, strong) NSTrackingArea *  trackingArea;
 @property (nonatomic, assign) BOOL  mouseEntered;
 @end
 
 
-@implementation BRSpecifyRectView
+@implementation BRSpecifyRectAreaView
 
 #pragma mark - init/terminate
 
@@ -62,21 +62,21 @@ static const BRResizeRule rules[8] = {
         self.knobWidthInside    = 10.0;
         self.knobWidthOutside   = 10.0;
         
-        self.keepRectangleInsideView = YES;
-        self.specifyWholeAreaIfDoubleClicked = NO;
+        self.keepAreaInsideView = YES;
+        self.specifyWholeBoundsIfDoubleClicked = NO;
         
         self.trackingArea   = nil;
         self.mouseEntered   = NO;
         
         // observe
-        [self addObserver:self forKeyPath:kBRSpecifyRectViewBindingRectangle options:NSKeyValueObservingOptionNew context:nil];
+        [self addObserver:self forKeyPath:kBRSpecifyRectAreaViewBindingAreaRect options:NSKeyValueObservingOptionNew context:nil];
     }
     return self;
 }
 
 - (void)dealloc
 {
-    [self removeObserver:self forKeyPath:kBRSpecifyRectViewBindingRectangle];
+    [self removeObserver:self forKeyPath:kBRSpecifyRectAreaViewBindingAreaRect];
     
     [self discardCursorRects];
     
@@ -99,9 +99,8 @@ static const BRResizeRule rules[8] = {
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (context == nil) {
-        if ([keyPath isEqualToString:kBRSpecifyRectViewBindingRectangle]) {
+        if ([keyPath isEqualToString:kBRSpecifyRectAreaViewBindingAreaRect]) {
             [self updateTrackingAreas];
-            
             [self resetCursorRects];
             
             [self setNeedsDisplay:YES];
@@ -118,12 +117,12 @@ static const BRResizeRule rules[8] = {
     NSPoint point = [self convertPoint:theEvent.locationInWindow fromView:nil];
     BRKnobType knobType = [self knobTypeAtPoint:point];
     
-    if (NSPointInRect(point, self.rectangle) && (theEvent.modifierFlags & NSCommandKeyMask)) {
+    if (NSPointInRect(point, self.areaRect) && (theEvent.modifierFlags & NSCommandKeyMask)) {
         // change mouse cursor
         [[NSCursor openHandCursor] set];
         
-        // move rectangle
-        NSRect rect = self.rectangle;
+        // move area
+        NSRect rect = self.areaRect;
         CGFloat dx = rect.origin.x - point.x;
         CGFloat dy = rect.origin.y - point.y;
         
@@ -133,18 +132,16 @@ static const BRResizeRule rules[8] = {
             rect.origin.x = point.x + dx;
             rect.origin.y = point.y + dy;
             
-            if (self.keepRectangleInsideView) {
-                self.rectangle = [self keptRectInView:rect];
+            if (self.keepAreaInsideView) {
+                self.areaRect = [self keptRectInView:rect];
             }
             else {
-                self.rectangle = rect;
+                self.areaRect = rect;
             }
-            
-            NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.rectangle]);
         }
     }
     else if (knobType == kBRKnobTypeNone) {
-        // create rectangle
+        // create area
         NSPoint startPoint  = point;
         NSPoint endPoint;
         
@@ -153,23 +150,21 @@ static const BRResizeRule rules[8] = {
             endPoint = [self convertPoint:theEvent.locationInWindow fromView:nil];
             
             NSRect rect = [self rectFromPoint:startPoint point:endPoint];
-            if (self.keepRectangleInsideView) {
-                self.rectangle = NSIntersectionRect(rect, self.bounds);
+            if (self.keepAreaInsideView) {
+                self.areaRect = NSIntersectionRect(rect, self.bounds);
             }
             else {
-                self.rectangle = rect;
+                self.areaRect = rect;
             }
-            
-            NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.rectangle]);
         }
         
-        if (self.specifyWholeAreaIfDoubleClicked && (theEvent.type == NSLeftMouseUp) && (theEvent.clickCount == 2)) {
-            self.rectangle = self.bounds;
+        if (self.specifyWholeBoundsIfDoubleClicked && (theEvent.type == NSLeftMouseUp) && (theEvent.clickCount == 2)) {
+            self.areaRect = self.bounds;
         }
     }
     else {
-        // expansion/reduction rectangle
-        NSRect rect = self.rectangle;
+        // expansion/reduction area
+        NSRect rect = self.areaRect;
         NSPoint prePoint;
         CGFloat dx, dy;
         
@@ -187,14 +182,12 @@ static const BRResizeRule rules[8] = {
             rect.size.width     += dx * rule.w;
             rect.size.height    += dy * rule.h;
             
-            if (self.keepRectangleInsideView) {
-                self.rectangle = NSIntersectionRect([self normalizedRect:rect], self.bounds);
+            if (self.keepAreaInsideView) {
+                self.areaRect = NSIntersectionRect([self normalizedRect:rect], self.bounds);
             }
             else {
-                self.rectangle = [self normalizedRect:rect];
+                self.areaRect = [self normalizedRect:rect];
             }
-            
-            NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.rectangle]);
         }
     }
 }
@@ -202,19 +195,11 @@ static const BRResizeRule rules[8] = {
 - (void)mouseEntered:(NSEvent *)theEvent
 {
     self.mouseEntered = YES;
-    
-    [self setNeedsDisplay:YES];
-    
-    NSLog(@"mouseEntered:");
 }
 
 - (void)mouseExited:(NSEvent *)theEvent
 {
     self.mouseEntered = NO;
-    
-    [self setNeedsDisplay:YES];
-    
-    NSLog(@"mouseExited:");
 }
 
 - (void)updateTrackingAreas
@@ -226,7 +211,7 @@ static const BRResizeRule rules[8] = {
     
     // add
     NSTrackingAreaOptions options = (NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingEnabledDuringMouseDrag);
-    NSTrackingArea * trackingArea = [[NSTrackingArea alloc] initWithRect:self.rectangle
+    NSTrackingArea * trackingArea = [[NSTrackingArea alloc] initWithRect:self.areaRect
                                                                  options:options
                                                                    owner:self
                                                                 userInfo:nil];
@@ -244,22 +229,6 @@ static const BRResizeRule rules[8] = {
     return YES;
 }
 
-#pragma mark - knob
-
-- (BRKnobType)knobTypeAtPoint:(NSPoint)point
-{
-    NSRect rect = self.rectangle;
-    if      (NSPointInRect(point, [self topLeftKnobRect:rect]))     { return kBRKnobTypeTopLeft;        }
-    else if (NSPointInRect(point, [self topRightKnobRect:rect]))    { return kBRKnobTypeTopRight;       }
-    else if (NSPointInRect(point, [self bottomLeftKnobRect:rect]))  { return kBRKnobTypeButtomLeft;     }
-    else if (NSPointInRect(point, [self bottomRightKnobRect:rect])) { return kBRKnobTypeButtomRight;    }
-    else if (NSPointInRect(point, [self topKnobRect:rect]))         { return kBRKnobTypeTop;            }
-    else if (NSPointInRect(point, [self bottomKnobRect:rect]))      { return kBRKnobTypeBottom;         }
-    else if (NSPointInRect(point, [self leftKnobRect:rect]))        { return kBRKnobTypeLeft;           }
-    else if (NSPointInRect(point, [self rightKnobRect:rect]))       { return kBRKnobTypeRight;          }
-    else                                                            { return kBRKnobTypeNone;           }
-}
-
 #pragma mark - cursor
 
 - (void)resetCursorRects
@@ -270,7 +239,7 @@ static const BRResizeRule rules[8] = {
 
 - (void)addCursors
 {
-    NSRect rect = self.rectangle;
+    NSRect rect = self.areaRect;
     if (! NSEqualSizes(rect.size, NSZeroSize)) {
         [self addCursorRect:[self topKnobRect:rect] cursor:[NSCursor resizeUpDownCursor]];
         [self addCursorRect:[self bottomKnobRect:rect] cursor:[NSCursor resizeUpDownCursor]];
@@ -283,7 +252,23 @@ static const BRResizeRule rules[8] = {
     }
 }
 
-#pragma mark - cursor sub
+#pragma mark - knob
+
+- (BRKnobType)knobTypeAtPoint:(NSPoint)point
+{
+    NSRect rect = self.areaRect;
+    if      (NSPointInRect(point, [self topLeftKnobRect:rect]))     { return kBRKnobTypeTopLeft;        }
+    else if (NSPointInRect(point, [self topRightKnobRect:rect]))    { return kBRKnobTypeTopRight;       }
+    else if (NSPointInRect(point, [self bottomLeftKnobRect:rect]))  { return kBRKnobTypeButtomLeft;     }
+    else if (NSPointInRect(point, [self bottomRightKnobRect:rect])) { return kBRKnobTypeButtomRight;    }
+    else if (NSPointInRect(point, [self topKnobRect:rect]))         { return kBRKnobTypeTop;            }
+    else if (NSPointInRect(point, [self bottomKnobRect:rect]))      { return kBRKnobTypeBottom;         }
+    else if (NSPointInRect(point, [self leftKnobRect:rect]))        { return kBRKnobTypeLeft;           }
+    else if (NSPointInRect(point, [self rightKnobRect:rect]))       { return kBRKnobTypeRight;          }
+    else                                                            { return kBRKnobTypeNone;           }
+}
+
+#pragma mark - knob sub
 
 - (NSRect)knobRectAtPoint:(NSPoint)point
 {
@@ -350,8 +335,8 @@ static const BRResizeRule rules[8] = {
     [ctx setShouldAntialias:NO];
     
     NSBezierPath * bezierPath = [NSBezierPath bezierPath];
-    NSRect rect = self.rectangle;
-    if (self.keepRectangleInsideView) {
+    NSRect rect = self.areaRect;
+    if (self.keepAreaInsideView) {
         rect.origin.y       += 1.0;
         rect.size.width     -= 1.0;
         rect.size.height    -= 1.0;
