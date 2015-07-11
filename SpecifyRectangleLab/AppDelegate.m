@@ -8,14 +8,14 @@
 
 #import "AppDelegate.h"
 #import "BRCustomView.h"
-#import "BRSpecifyRectView.h"
+#import "BRSpecifyRectAreaView.h"
 
 @interface AppDelegate ()
 @property (nonatomic, weak) IBOutlet NSWindow * window;
 @property (nonatomic, weak) IBOutlet BRCustomView * originalImageView;
 @property (nonatomic, weak) IBOutlet BRCustomView * croppedImageView;
 
-@property (nonatomic, strong) BRSpecifyRectView * specifyRectView;
+@property (nonatomic, strong) BRSpecifyRectAreaView * specifyRectAreaView;
 @end
 
 @implementation AppDelegate
@@ -28,9 +28,9 @@
     self.originalImageView.backgroundImage = [NSImage imageNamed:@"Image.jpg"];
     
     NSSize size = self.originalImageView.frame.size;
-    self.specifyRectView = [[BRSpecifyRectView alloc] initWithFrame:NSMakeRect(0.0, 0.0, size.width, size.height)];
-    self.specifyRectView.specifyWholeAreaIfDoubleClicked = YES;
-    [self.originalImageView addSubview:self.specifyRectView];
+    self.specifyRectAreaView = [[BRSpecifyRectAreaView alloc] initWithFrame:NSMakeRect(0.0, 0.0, size.width, size.height)];
+    self.specifyRectAreaView.specifyWholeAreaIfDoubleClicked = YES;
+    [self.originalImageView addSubview:self.specifyRectAreaView];
     
     [self.window display];
 }

@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		9371DA061B356E2800FCFB3F /* BRCustomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9371DA051B356E2800FCFB3F /* BRCustomView.m */; };
 		9371DA081B356FCD00FCFB3F /* Image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9371DA071B356FCC00FCFB3F /* Image.jpg */; };
-		9371DA0B1B35708800FCFB3F /* BRSpecifyRectView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9371DA0A1B35708800FCFB3F /* BRSpecifyRectView.m */; };
+		9371DA0B1B35708800FCFB3F /* BRSpecifyRectAreaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9371DA0A1B35708800FCFB3F /* BRSpecifyRectAreaView.m */; };
 		93B909F21B35658E007F38E2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B909F11B35658E007F38E2 /* AppDelegate.m */; };
 		93B909F41B35658E007F38E2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B909F31B35658E007F38E2 /* main.m */; };
 		93B909F61B35658E007F38E2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93B909F51B35658E007F38E2 /* Images.xcassets */; };
@@ -31,8 +31,8 @@
 		9371DA041B356E2800FCFB3F /* BRCustomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRCustomView.h; sourceTree = "<group>"; };
 		9371DA051B356E2800FCFB3F /* BRCustomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRCustomView.m; sourceTree = "<group>"; };
 		9371DA071B356FCC00FCFB3F /* Image.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Image.jpg; sourceTree = "<group>"; };
-		9371DA091B35708800FCFB3F /* BRSpecifyRectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRSpecifyRectView.h; sourceTree = "<group>"; };
-		9371DA0A1B35708800FCFB3F /* BRSpecifyRectView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRSpecifyRectView.m; sourceTree = "<group>"; };
+		9371DA091B35708800FCFB3F /* BRSpecifyRectAreaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRSpecifyRectAreaView.h; sourceTree = "<group>"; };
+		9371DA0A1B35708800FCFB3F /* BRSpecifyRectAreaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRSpecifyRectAreaView.m; sourceTree = "<group>"; };
 		93B909EB1B35658E007F38E2 /* SpecifyRectangleLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpecifyRectangleLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93B909EF1B35658E007F38E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		93B909F01B35658E007F38E2 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -68,8 +68,8 @@
 			children = (
 				9371DA041B356E2800FCFB3F /* BRCustomView.h */,
 				9371DA051B356E2800FCFB3F /* BRCustomView.m */,
-				9371DA091B35708800FCFB3F /* BRSpecifyRectView.h */,
-				9371DA0A1B35708800FCFB3F /* BRSpecifyRectView.m */,
+				9371DA091B35708800FCFB3F /* BRSpecifyRectAreaView.h */,
+				9371DA0A1B35708800FCFB3F /* BRSpecifyRectAreaView.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -234,7 +234,7 @@
 			files = (
 				93B909F41B35658E007F38E2 /* main.m in Sources */,
 				93B909F21B35658E007F38E2 /* AppDelegate.m in Sources */,
-				9371DA0B1B35708800FCFB3F /* BRSpecifyRectView.m in Sources */,
+				9371DA0B1B35708800FCFB3F /* BRSpecifyRectAreaView.m in Sources */,
 				9371DA061B356E2800FCFB3F /* BRCustomView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

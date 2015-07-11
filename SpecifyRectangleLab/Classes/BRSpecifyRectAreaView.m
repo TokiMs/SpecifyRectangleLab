@@ -1,12 +1,12 @@
 //
-//  BRSpecifyRectView.m
+//  BRSpecifyRectAreaView.m
 //  SpecifyRectangleLab
 //
 //  Created by Kenji TAMAKI on 6/20/15.
 //  Copyright (c) 2015 Brother Industries, Ltd. All rights reserved.
 //
 
-#import "BRSpecifyRectView.h"
+#import "BRSpecifyRectAreaView.h"
 
 // binding key
 NSString * const kBRSpecifyRectViewBindingRectangle = @"rectangle";
@@ -41,13 +41,13 @@ static const BRResizeRule rules[8] = {
 };
 
 
-@interface BRSpecifyRectView ()
+@interface BRSpecifyRectAreaView ()
 @property (nonatomic, strong) NSTrackingArea *  trackingArea;
 @property (nonatomic, assign) BOOL  mouseEntered;
 @end
 
 
-@implementation BRSpecifyRectView
+@implementation BRSpecifyRectAreaView
 
 #pragma mark - init/terminate
 

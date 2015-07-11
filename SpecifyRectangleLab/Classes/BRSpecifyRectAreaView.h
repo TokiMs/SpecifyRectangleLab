@@ -1,5 +1,5 @@
 //
-//  BRSpecifyRectView.h
+//  BRSpecifyRectAreaView.h
 //  SpecifyRectangleLab
 //
 //  Created by Kenji TAMAKI on 6/20/15.
@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface BRSpecifyRectView : NSView
+@interface BRSpecifyRectAreaView : NSView
 
 @property (nonatomic, assign) CGFloat   lineWidth;
 @property (nonatomic, copy) NSArray *   lineColors;
