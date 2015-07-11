@@ -56,8 +56,9 @@ static const BRResizeRule rules[8] = {
     self = [super initWithFrame:frame];
     if (self) {
         self.lineWidth          = 1.0;
+        self.lineColors         = [NSArray arrayWithObjects:[NSColor colorWithDeviceWhite:0.0 alpha:0.6], [NSColor colorWithDeviceWhite:1.0 alpha:0.6], nil];
         self.lineDash           = 3.0;
-        self.lineAlpha          = 0.6;
+        
         self.knobWidthInside    = 10.0;
         self.knobWidthOutside   = 10.0;
         
@@ -351,15 +352,28 @@ static const BRResizeRule rules[8] = {
     [bezierPath appendBezierPathWithRect:rect];
     [bezierPath setLineWidth:self.lineWidth];
     
-    // set the line dash pattern
-    CGFloat lineDash[] = {self.lineDash, self.lineDash};
-    // draw line
-    [[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:self.lineAlpha] set];
-    [bezierPath setLineDash:lineDash count:2 phase:0.0];
-    [bezierPath stroke];
-    [[NSColor colorWithDeviceRed:1.0 green:1.0 blue:1.0 alpha:self.lineAlpha] set];
-    [bezierPath setLineDash:lineDash count:2 phase:self.lineDash];
-    [bezierPath stroke];
+    NSUInteger count = self.lineColors.count;
+    CGFloat * lineDash = (CGFloat *)malloc(sizeof(CGFloat) * count);
+    if (lineDash) {
+        // set the line dash pattern
+        for (NSUInteger idx = 0; idx < count; idx++) {
+            lineDash[idx] = self.lineDash;
+        }
+        
+        // draw line
+        CGFloat phase = 0.0;
+        for (NSUInteger idx = 0; idx < count; idx++) {
+            NSColor * color = self.lineColors[idx];
+            
+            [color set];
+            [bezierPath setLineDash:lineDash count:count phase:phase];
+            [bezierPath stroke];
+            
+            phase += lineDash[idx];
+        }
+        
+        free(lineDash);
+    }
     
     [ctx restoreGraphicsState];
 }
