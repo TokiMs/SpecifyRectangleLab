@@ -11,10 +11,6 @@
 // binding key
 NSString * const kBRSpecifyRectViewBindingRectangle = @"rectangle";
 
-static const CGFloat kKnobWidthInside   = 10.0;
-static const CGFloat kKnobWidthOutside  = 10.0;
-static const CGFloat kKnobWidth         = kKnobWidthInside + kKnobWidthOutside;
-
 // knob type
 typedef NS_ENUM(NSInteger, BRKnobType) {
     kBRKnobTypeTopLeft,
@@ -59,11 +55,15 @@ static const BRResizeRule rules[8] = {
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.lineWidth  = 1.0;
+        self.lineWidth          = 1.0;
+        self.lineColors         = [NSArray arrayWithObjects:[NSColor colorWithDeviceWhite:0.0 alpha:0.6], [NSColor colorWithDeviceWhite:1.0 alpha:0.6], nil];
+        self.lineDash           = 3.0;
+        
+        self.knobWidthInside    = 10.0;
+        self.knobWidthOutside   = 10.0;
         
         self.keepRectangleInsideView = YES;
         self.specifyWholeAreaIfDoubleClicked = NO;
-//        self.alphaValue = 0.5f;
         
         self.trackingArea   = nil;
         self.mouseEntered   = NO;
@@ -81,8 +81,9 @@ static const BRResizeRule rules[8] = {
     [self discardCursorRects];
     
 #if !__has_feature(objc_arc)
+    self.lineColors = nil;
     self.trackingArea = nil;
-    [self dealloc];
+    [super dealloc];
 #endif
 }
 
@@ -145,7 +146,7 @@ static const BRResizeRule rules[8] = {
     else if (knobType == kBRKnobTypeNone) {
         // create rectangle
         NSPoint startPoint  = point;
-        NSPoint endPoint    = point;
+        NSPoint endPoint;
         
         while (theEvent.type != NSLeftMouseUp) {
             theEvent = [self.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
@@ -225,11 +226,17 @@ static const BRResizeRule rules[8] = {
     
     // add
     NSTrackingAreaOptions options = (NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingEnabledDuringMouseDrag);
-    self.trackingArea = [[NSTrackingArea alloc] initWithRect:self.rectangle
-                                                     options:options
-                                                       owner:self
-                                                    userInfo:nil];
-    [self addTrackingArea:self.trackingArea];
+    NSTrackingArea * trackingArea = [[NSTrackingArea alloc] initWithRect:self.rectangle
+                                                                 options:options
+                                                                   owner:self
+                                                                userInfo:nil];
+#if !__has_feature(objc_arc)
+    [trackingArea autorelease];
+#endif
+    [self addTrackingArea:trackingArea];
+    self.trackingArea = trackingArea;
+    
+    [super updateTrackingAreas];
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
@@ -280,7 +287,8 @@ static const BRResizeRule rules[8] = {
 
 - (NSRect)knobRectAtPoint:(NSPoint)point
 {
-    return NSMakeRect(point.x - kKnobWidthOutside, point.y - kKnobWidthOutside, kKnobWidth, kKnobWidth);
+    CGFloat knobWidth = self.knobWidthInside + self.knobWidthOutside;
+    return NSMakeRect(point.x - self.knobWidthOutside, point.y - self.knobWidthOutside, knobWidth, knobWidth);
 }
 
 - (NSRect)topLeftKnobRect:(NSRect)frame
@@ -351,15 +359,28 @@ static const BRResizeRule rules[8] = {
     [bezierPath appendBezierPathWithRect:rect];
     [bezierPath setLineWidth:self.lineWidth];
     
-    // set the line dash pattern
-    CGFloat lineDash[] = {3.0, 3.0};
-    // draw line
-    [[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:0.6] set];
-    [bezierPath setLineDash:lineDash count:2 phase:0.0];
-    [bezierPath stroke];
-    [[NSColor colorWithDeviceRed:1.0 green:1.0 blue:1.0 alpha:0.6] set];
-    [bezierPath setLineDash:lineDash count:2 phase:3.0];
-    [bezierPath stroke];
+    NSUInteger count = self.lineColors.count;
+    CGFloat * lineDash = (CGFloat *)malloc(sizeof(CGFloat) * count);
+    if (lineDash) {
+        // set the line dash pattern
+        for (NSUInteger idx = 0; idx < count; idx++) {
+            lineDash[idx] = self.lineDash;
+        }
+        
+        // draw line
+        CGFloat phase = 0.0;
+        for (NSUInteger idx = 0; idx < count; idx++) {
+            NSColor * color = self.lineColors[idx];
+            
+            [color set];
+            [bezierPath setLineDash:lineDash count:count phase:phase];
+            [bezierPath stroke];
+            
+            phase += lineDash[idx];
+        }
+        
+        free(lineDash);
+    }
     
     [ctx restoreGraphicsState];
 }
