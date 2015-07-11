@@ -11,10 +11,6 @@
 // binding key
 NSString * const kBRSpecifyRectViewBindingRectangle = @"rectangle";
 
-static const CGFloat kKnobWidthInside   = 10.0;
-static const CGFloat kKnobWidthOutside  = 10.0;
-static const CGFloat kKnobWidth         = kKnobWidthInside + kKnobWidthOutside;
-
 // knob type
 typedef NS_ENUM(NSInteger, BRKnobType) {
     kBRKnobTypeTopLeft,
@@ -59,7 +55,9 @@ static const BRResizeRule rules[8] = {
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.lineWidth  = 1.0;
+        self.lineWidth          = 1.0;
+        self.knobWidthInside    = 10.0;
+        self.knobWidthOutside   = 10.0;
         
         self.keepRectangleInsideView = YES;
         self.specifyWholeAreaIfDoubleClicked = NO;
@@ -280,7 +278,8 @@ static const BRResizeRule rules[8] = {
 
 - (NSRect)knobRectAtPoint:(NSPoint)point
 {
-    return NSMakeRect(point.x - kKnobWidthOutside, point.y - kKnobWidthOutside, kKnobWidth, kKnobWidth);
+    CGFloat knobWidth = self.knobWidthInside + self.knobWidthOutside;
+    return NSMakeRect(point.x - self.knobWidthOutside, point.y - self.knobWidthOutside, knobWidth, knobWidth);
 }
 
 - (NSRect)topLeftKnobRect:(NSRect)frame

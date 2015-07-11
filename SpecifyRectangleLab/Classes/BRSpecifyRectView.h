@@ -11,6 +11,8 @@
 @interface BRSpecifyRectView : NSView
 
 @property (nonatomic, assign) CGFloat   lineWidth;
+@property (nonatomic, assign) CGFloat   knobWidthInside;
+@property (nonatomic, assign) CGFloat   knobWidthOutside;
 
 @property (nonatomic, assign) BOOL      keepRectangleInsideView;
 @property (nonatomic, assign) BOOL      specifyWholeAreaIfDoubleClicked;
