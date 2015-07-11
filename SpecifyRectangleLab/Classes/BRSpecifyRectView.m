@@ -315,23 +315,19 @@ static const BRResizeRule rules[8] = {
 {
     [super drawRect:dirtyRect];
     
-//    NSColor * color = [NSColor colorWithCalibratedWhite:1.0f alpha:0.3f];
-//    NSColor * color = [NSColor colorWithDeviceRed:1.0f green:1.0f blue:1.0f alpha:0.5f];
-    NSColor * color = [NSColor blackColor];
-    [color set];
-    
     NSBezierPath * bezierPath = [NSBezierPath bezierPath];
-    // set the line dash pattern
-    CGFloat lineDash[2];
-    lineDash[0] = 10.0;
-    lineDash[1] = 5.0;
-    [bezierPath setLineDash:lineDash count:2 phase:0.0];
-    //
     [bezierPath appendBezierPathWithRect:self.rectangle];
     [bezierPath setLineWidth:self.lineWidth];
+    
+    // set the line dash pattern
+    CGFloat lineDash[] = {3.0, 3.0};
+    // draw line
+    [[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:0.6] set];
+    [bezierPath setLineDash:lineDash count:2 phase:0.0];
     [bezierPath stroke];
-//    [NSBezierPath strokeRect:self.rectangle];
-//    NSRectFill(self.rectangle);
+    [[NSColor colorWithDeviceRed:1.0 green:1.0 blue:1.0 alpha:0.6] set];
+    [bezierPath setLineDash:lineDash count:2 phase:3.0];
+    [bezierPath stroke];
 }
 
 #pragma mark - rectangle
