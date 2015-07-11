@@ -315,6 +315,10 @@ static const BRResizeRule rules[8] = {
 {
     [super drawRect:dirtyRect];
     
+    NSGraphicsContext * ctx = [NSGraphicsContext currentContext];
+    [ctx saveGraphicsState];
+    [ctx setShouldAntialias:NO];
+    
     NSBezierPath * bezierPath = [NSBezierPath bezierPath];
     [bezierPath appendBezierPathWithRect:self.rectangle];
     [bezierPath setLineWidth:self.lineWidth];
@@ -328,6 +332,8 @@ static const BRResizeRule rules[8] = {
     [[NSColor colorWithDeviceRed:1.0 green:1.0 blue:1.0 alpha:0.6] set];
     [bezierPath setLineDash:lineDash count:2 phase:3.0];
     [bezierPath stroke];
+    
+    [ctx restoreGraphicsState];
 }
 
 #pragma mark - rectangle
