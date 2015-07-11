@@ -9,15 +9,10 @@
 #import "BRSpecifyRectView.h"
 
 // binding key
-NSString * const kBRSpecifyRectViewBindingRectangle     = @"rectangle";
-NSString * const kBRSpecifyRectViewBindingStartPoint    = @"startPoint";
-NSString * const kBRSpecifyRectViewBindingEndPoint      = @"endPoint";
+NSString * const kBRSpecifyRectViewBindingRectangle = @"rectangle";
 
 
 @interface BRSpecifyRectView ()
-@property (nonatomic, assign) NSPoint   startPoint;
-@property (nonatomic, assign) NSPoint   endPoint;
-//
 @property (nonatomic, strong) NSTrackingArea *  trackingArea;
 @property (nonatomic, assign) BOOL  mouseEntered;
 @end
@@ -32,9 +27,6 @@ NSString * const kBRSpecifyRectViewBindingEndPoint      = @"endPoint";
     self = [super initWithFrame:frame];
     if (self) {
         self.lineWidth  = 1.0;
-        
-        self.startPoint = NSZeroPoint;
-        self.endPoint   = NSZeroPoint;
         
 //        self.alphaValue = 0.5f;
         
@@ -56,32 +48,15 @@ NSString * const kBRSpecifyRectViewBindingEndPoint      = @"endPoint";
 #endif
 }
 
-#pragma mark - getter
-
-- (NSRect)rectangle
-{
-    return [self rectFromPoint:self.startPoint point:self.endPoint];
-}
-
 #pragma mark - KVO
-
-+ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
-{
-    NSSet * keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
-    NSArray * affectingKeys;
-    
-    if ([key isEqualToString:kBRSpecifyRectViewBindingRectangle]) {
-        affectingKeys = @[kBRSpecifyRectViewBindingStartPoint, kBRSpecifyRectViewBindingEndPoint];
-    }
-    
-    return affectingKeys ? [keyPaths setByAddingObjectsFromArray:affectingKeys] : keyPaths;
-}
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (context == nil) {
         if ([keyPath isEqualToString:kBRSpecifyRectViewBindingRectangle]) {
             [self updateTrackingAreas];
+            
+            [self setNeedsDisplay:YES];
         }
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -98,12 +73,9 @@ NSString * const kBRSpecifyRectViewBindingEndPoint      = @"endPoint";
         theEvent = [self.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
         endPoint = [self convertPoint:theEvent.locationInWindow fromView:[[self window] contentView]];
         
-        self.startPoint = startPoint;
-        self.endPoint = endPoint;
+        self.rectangle = [self rectFromPoint:startPoint point:endPoint];
         
-        [self setNeedsDisplay:YES];
-        
-        NSLog(@"mouseDown: %@, %@", [NSValue valueWithPoint:self.startPoint], [NSValue valueWithPoint:self.endPoint]);
+        NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.rectangle]);
     }
 }
 
