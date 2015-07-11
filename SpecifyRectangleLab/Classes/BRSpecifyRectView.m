@@ -67,11 +67,11 @@ NSString * const kBRSpecifyRectViewBindingRectangle = @"rectangle";
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-    NSPoint startPoint = [self convertPoint:theEvent.locationInWindow fromView:[[self window] contentView]];
+    NSPoint startPoint = [self convertPoint:theEvent.locationInWindow fromView:nil];
     NSPoint endPoint = startPoint;
     while (theEvent.type != NSLeftMouseUp) {
         theEvent = [self.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
-        endPoint = [self convertPoint:theEvent.locationInWindow fromView:[[self window] contentView]];
+        endPoint = [self convertPoint:theEvent.locationInWindow fromView:nil];
         
         self.rectangle = [self rectFromPoint:startPoint point:endPoint];
         
