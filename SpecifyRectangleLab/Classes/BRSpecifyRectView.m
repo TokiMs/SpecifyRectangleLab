@@ -61,6 +61,8 @@ static const BRResizeRule rules[8] = {
     if (self) {
         self.lineWidth  = 1.0;
         
+        self.keepRectangleInsideView = YES;
+        self.specifyWholeAreaIfDoubleClicked = NO;
 //        self.alphaValue = 0.5f;
         
         self.trackingArea   = nil;
@@ -130,7 +132,12 @@ static const BRResizeRule rules[8] = {
             rect.origin.x = point.x + dx;
             rect.origin.y = point.y + dy;
             
-            self.rectangle = rect;
+            if (self.keepRectangleInsideView) {
+                self.rectangle = [self keptRectInView:rect];
+            }
+            else {
+                self.rectangle = rect;
+            }
             
             NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.rectangle]);
         }
@@ -144,9 +151,19 @@ static const BRResizeRule rules[8] = {
             theEvent = [self.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
             endPoint = [self convertPoint:theEvent.locationInWindow fromView:nil];
             
-            self.rectangle = [self rectFromPoint:startPoint point:endPoint];
+            NSRect rect = [self rectFromPoint:startPoint point:endPoint];
+            if (self.keepRectangleInsideView) {
+                self.rectangle = NSIntersectionRect(rect, self.bounds);
+            }
+            else {
+                self.rectangle = rect;
+            }
             
             NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.rectangle]);
+        }
+        
+        if (self.specifyWholeAreaIfDoubleClicked && (theEvent.type == NSLeftMouseUp) && (theEvent.clickCount == 2)) {
+            self.rectangle = self.bounds;
         }
     }
     else {
@@ -169,7 +186,12 @@ static const BRResizeRule rules[8] = {
             rect.size.width     += dx * rule.w;
             rect.size.height    += dy * rule.h;
             
-            self.rectangle = [self normalizedRect:rect];
+            if (self.keepRectangleInsideView) {
+                self.rectangle = NSIntersectionRect([self normalizedRect:rect], self.bounds);
+            }
+            else {
+                self.rectangle = [self normalizedRect:rect];
+            }
             
             NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.rectangle]);
         }
@@ -320,7 +342,13 @@ static const BRResizeRule rules[8] = {
     [ctx setShouldAntialias:NO];
     
     NSBezierPath * bezierPath = [NSBezierPath bezierPath];
-    [bezierPath appendBezierPathWithRect:self.rectangle];
+    NSRect rect = self.rectangle;
+    if (self.keepRectangleInsideView) {
+        rect.origin.y       += 1.0;
+        rect.size.width     -= 1.0;
+        rect.size.height    -= 1.0;
+    }
+    [bezierPath appendBezierPathWithRect:rect];
     [bezierPath setLineWidth:self.lineWidth];
     
     // set the line dash pattern
@@ -365,6 +393,31 @@ static const BRResizeRule rules[8] = {
     if (rect.size.height < 0) {
         newRect.origin.y = rect.origin.y + rect.size.height;
         newRect.size.height = -rect.size.height;
+    }
+    
+    return newRect;
+}
+
+- (NSRect)keptRectInView:(NSRect)rect
+{
+    NSRect newRect = [self normalizedRect:rect];
+    CGFloat dx, dy;
+    
+    dx = NSMinX(newRect) - NSMinX(self.bounds);
+    if (dx < 0) {
+        newRect = NSOffsetRect(newRect, -dx, 0.0);
+    }
+    dx = NSMaxX(newRect) - NSMaxX(self.bounds);
+    if (dx > 0) {
+        newRect = NSOffsetRect(newRect, -dx, 0.0);
+    }
+    dy = NSMinY(newRect) - NSMinY(self.bounds);
+    if (dy < 0) {
+        newRect = NSOffsetRect(newRect, 0.0, -dy);
+    }
+    dy = NSMaxY(newRect) - NSMaxY(self.bounds);
+    if (dy > 0) {
+        newRect = NSOffsetRect(newRect, 0.0, -dy);
     }
     
     return newRect;
