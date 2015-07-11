@@ -15,6 +15,35 @@ static const CGFloat kKnobWidthInside   = 10.0;
 static const CGFloat kKnobWidthOutside  = 10.0;
 static const CGFloat kKnobWidth         = kKnobWidthInside + kKnobWidthOutside;
 
+// knob type
+typedef NS_ENUM(NSInteger, BRKnobType) {
+    kBRKnobTypeTopLeft,
+    kBRKnobTypeTopRight,
+    kBRKnobTypeButtomLeft,
+    kBRKnobTypeButtomRight,
+    kBRKnobTypeTop,
+    kBRKnobTypeBottom,
+    kBRKnobTypeLeft,
+    kBRKnobTypeRight,
+    kBRKnobTypeNone,
+};
+
+// resize rule
+typedef struct {
+    CGFloat x, y, w, h;
+} BRResizeRule;
+
+static const BRResizeRule rules[8] = {
+    {1,  1, -1, -1}, // Top Left
+    {0,  1,  1, -1}, // Top RIGHT
+    {1,  0, -1,  1}, // Bottom Left
+    {0,  0,  1,  1}, // Bottom Right
+    {0,  1,  0, -1}, // Top
+    {0,  0,  0,  1}, // Bottom
+    {1,  0, -1,  0}, // Left
+    {0,  0,  1,  0}, // Right
+};
+
 
 @interface BRSpecifyRectView ()
 @property (nonatomic, strong) NSTrackingArea *  trackingArea;
@@ -83,15 +112,44 @@ static const CGFloat kKnobWidth         = kKnobWidthInside + kKnobWidthOutside;
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-    NSPoint startPoint = [self convertPoint:theEvent.locationInWindow fromView:nil];
-    NSPoint endPoint = startPoint;
-    while (theEvent.type != NSLeftMouseUp) {
-        theEvent = [self.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
-        endPoint = [self convertPoint:theEvent.locationInWindow fromView:nil];
+    NSPoint point = [self convertPoint:theEvent.locationInWindow fromView:nil];
+    BRKnobType knobType = [self knobTypeAtPoint:point];
+    if (knobType == kBRKnobTypeNone) {
+        // create rectangle
+        NSPoint startPoint  = point;
+        NSPoint endPoint    = point;
         
-        self.rectangle = [self rectFromPoint:startPoint point:endPoint];
-        
-        NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.rectangle]);
+        while (theEvent.type != NSLeftMouseUp) {
+            theEvent = [self.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
+            endPoint = [self convertPoint:theEvent.locationInWindow fromView:nil];
+            
+            self.rectangle = [self rectFromPoint:startPoint point:endPoint];
+            
+            NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.rectangle]);
+        }
+    }
+    else {
+        // expansion/reduction rectangle
+        NSPoint prePoint;
+        CGFloat dx, dy;
+        while (theEvent.type != NSLeftMouseUp) {
+            prePoint = point;
+            theEvent = [self.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
+            point = [self convertPoint:theEvent.locationInWindow fromView:nil];
+            dx = point.x - prePoint.x;
+            dy = point.y - prePoint.y;
+            
+            BRResizeRule rule = rules[knobType];
+            
+            NSRect rect = self.rectangle;
+            rect.origin.x       += dx * rule.x;
+            rect.origin.y       += dy * rule.y;
+            rect.size.width     += dx * rule.w;
+            rect.size.height    += dy * rule.h;
+            self.rectangle = rect;
+            
+            NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.rectangle]);
+        }
     }
 }
 
@@ -132,6 +190,22 @@ static const CGFloat kKnobWidth         = kKnobWidthInside + kKnobWidthOutside;
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
 {
     return YES;
+}
+
+#pragma mark - knob
+
+- (BRKnobType)knobTypeAtPoint:(NSPoint)point
+{
+    NSRect rect = self.rectangle;
+    if      (NSPointInRect(point, [self topLeftKnobRect:rect]))     { return kBRKnobTypeTopLeft;        }
+    else if (NSPointInRect(point, [self topRightKnobRect:rect]))    { return kBRKnobTypeTopRight;       }
+    else if (NSPointInRect(point, [self bottomLeftKnobRect:rect]))  { return kBRKnobTypeButtomLeft;     }
+    else if (NSPointInRect(point, [self bottomRightKnobRect:rect])) { return kBRKnobTypeButtomRight;    }
+    else if (NSPointInRect(point, [self topKnobRect:rect]))         { return kBRKnobTypeTop;            }
+    else if (NSPointInRect(point, [self bottomKnobRect:rect]))      { return kBRKnobTypeBottom;         }
+    else if (NSPointInRect(point, [self leftKnobRect:rect]))        { return kBRKnobTypeLeft;           }
+    else if (NSPointInRect(point, [self rightKnobRect:rect]))       { return kBRKnobTypeRight;          }
+    else                                                            { return kBRKnobTypeNone;           }
 }
 
 #pragma mark - cursor
@@ -236,6 +310,8 @@ static const CGFloat kKnobWidth         = kKnobWidthInside + kKnobWidthOutside;
 //    [NSBezierPath strokeRect:self.rectangle];
 //    NSRectFill(self.rectangle);
 }
+
+#pragma mark - rectangle
 
 - (NSRect)rectFromPoint:(NSPoint)p1 point:(NSPoint)p2
 {
