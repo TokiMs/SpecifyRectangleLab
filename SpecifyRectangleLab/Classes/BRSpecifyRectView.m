@@ -115,7 +115,10 @@ static const BRResizeRule rules[8] = {
     NSPoint point = [self convertPoint:theEvent.locationInWindow fromView:nil];
     BRKnobType knobType = [self knobTypeAtPoint:point];
     
-    if (NSPointInRect(point, self.rectangle)) {
+    if (NSPointInRect(point, self.rectangle) && (theEvent.modifierFlags & NSCommandKeyMask)) {
+        // change mouse cursor
+        [[NSCursor openHandCursor] set];
+        
         // move rectangle
         NSRect rect = self.rectangle;
         CGFloat dx = rect.origin.x - point.x;
