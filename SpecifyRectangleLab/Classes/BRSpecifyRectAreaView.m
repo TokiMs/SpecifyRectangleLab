@@ -101,7 +101,6 @@ static const BRResizeRule rules[8] = {
     if (context == nil) {
         if ([keyPath isEqualToString:kBRSpecifyRectAreaViewBindingAreaRect]) {
             [self updateTrackingAreas];
-            
             [self resetCursorRects];
             
             [self setNeedsDisplay:YES];
@@ -230,22 +229,6 @@ static const BRResizeRule rules[8] = {
     return YES;
 }
 
-#pragma mark - knob
-
-- (BRKnobType)knobTypeAtPoint:(NSPoint)point
-{
-    NSRect rect = self.areaRect;
-    if      (NSPointInRect(point, [self topLeftKnobRect:rect]))     { return kBRKnobTypeTopLeft;        }
-    else if (NSPointInRect(point, [self topRightKnobRect:rect]))    { return kBRKnobTypeTopRight;       }
-    else if (NSPointInRect(point, [self bottomLeftKnobRect:rect]))  { return kBRKnobTypeButtomLeft;     }
-    else if (NSPointInRect(point, [self bottomRightKnobRect:rect])) { return kBRKnobTypeButtomRight;    }
-    else if (NSPointInRect(point, [self topKnobRect:rect]))         { return kBRKnobTypeTop;            }
-    else if (NSPointInRect(point, [self bottomKnobRect:rect]))      { return kBRKnobTypeBottom;         }
-    else if (NSPointInRect(point, [self leftKnobRect:rect]))        { return kBRKnobTypeLeft;           }
-    else if (NSPointInRect(point, [self rightKnobRect:rect]))       { return kBRKnobTypeRight;          }
-    else                                                            { return kBRKnobTypeNone;           }
-}
-
 #pragma mark - cursor
 
 - (void)resetCursorRects
@@ -269,7 +252,23 @@ static const BRResizeRule rules[8] = {
     }
 }
 
-#pragma mark - cursor sub
+#pragma mark - knob
+
+- (BRKnobType)knobTypeAtPoint:(NSPoint)point
+{
+    NSRect rect = self.areaRect;
+    if      (NSPointInRect(point, [self topLeftKnobRect:rect]))     { return kBRKnobTypeTopLeft;        }
+    else if (NSPointInRect(point, [self topRightKnobRect:rect]))    { return kBRKnobTypeTopRight;       }
+    else if (NSPointInRect(point, [self bottomLeftKnobRect:rect]))  { return kBRKnobTypeButtomLeft;     }
+    else if (NSPointInRect(point, [self bottomRightKnobRect:rect])) { return kBRKnobTypeButtomRight;    }
+    else if (NSPointInRect(point, [self topKnobRect:rect]))         { return kBRKnobTypeTop;            }
+    else if (NSPointInRect(point, [self bottomKnobRect:rect]))      { return kBRKnobTypeBottom;         }
+    else if (NSPointInRect(point, [self leftKnobRect:rect]))        { return kBRKnobTypeLeft;           }
+    else if (NSPointInRect(point, [self rightKnobRect:rect]))       { return kBRKnobTypeRight;          }
+    else                                                            { return kBRKnobTypeNone;           }
+}
+
+#pragma mark - knob sub
 
 - (NSRect)knobRectAtPoint:(NSPoint)point
 {
