@@ -27,7 +27,8 @@
     
     self.originalImageView.backgroundImage = [NSImage imageNamed:@"Image.jpg"];
     
-    self.specifyRectView = [[BRSpecifyRectView alloc] initWithFrame:self.originalImageView.frame];
+    NSSize size = self.originalImageView.frame.size;
+    self.specifyRectView = [[BRSpecifyRectView alloc] initWithFrame:NSMakeRect(0.0, 0.0, size.width, size.height)];
     [self.originalImageView addSubview:self.specifyRectView];
     
     [self.window display];
