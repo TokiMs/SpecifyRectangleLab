@@ -206,24 +206,29 @@ static const CGFloat kKnobWidth         = kKnobWidthInside + kKnobWidthOutside;
 
 #pragma mark - cursor sub
 
+- (NSRect)knobRectAtPoint:(NSPoint)point
+{
+    return NSMakeRect(point.x - kKnobWidthOutside, point.y - kKnobWidthOutside, kKnobWidth, kKnobWidth);
+}
+
 - (NSRect)topLeftKnobRect:(NSRect)frame
 {
-    return NSMakeRect(NSMinX(frame) - kKnobWidthOutside, NSMinY(frame) - kKnobWidthOutside, kKnobWidth, kKnobWidth);
+    return [self knobRectAtPoint:NSMakePoint(NSMinX(frame), NSMinY(frame))];
 }
 
 - (NSRect)topRightKnobRect:(NSRect)frame
 {
-    return NSMakeRect(NSMaxX(frame) - kKnobWidthOutside, NSMinY(frame) - kKnobWidthOutside, kKnobWidth, kKnobWidth);
+    return [self knobRectAtPoint:NSMakePoint(NSMaxX(frame), NSMinY(frame))];
 }
 
 - (NSRect)buttomLeftKnobRect:(NSRect)frame
 {
-    return NSMakeRect(NSMinX(frame) - kKnobWidthOutside, NSMaxY(frame) - kKnobWidthOutside, kKnobWidth, kKnobWidth);
+    return [self knobRectAtPoint:NSMakePoint(NSMinX(frame), NSMaxY(frame))];
 }
 
 - (NSRect)buttomRightKnobRect:(NSRect)frame
 {
-    return NSMakeRect(NSMaxX(frame) - kKnobWidthOutside, NSMaxY(frame) - kKnobWidthOutside, kKnobWidth, kKnobWidth);
+    return [self knobRectAtPoint:NSMakePoint(NSMaxX(frame), NSMaxY(frame))];
 }
 
 - (NSRect)topKnobRect:(NSRect)frame
