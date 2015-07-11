@@ -139,8 +139,6 @@ static const BRResizeRule rules[8] = {
             else {
                 self.areaRect = rect;
             }
-            
-            NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.areaRect]);
         }
     }
     else if (knobType == kBRKnobTypeNone) {
@@ -159,8 +157,6 @@ static const BRResizeRule rules[8] = {
             else {
                 self.areaRect = rect;
             }
-            
-            NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.areaRect]);
         }
         
         if (self.specifyWholeBoundsIfDoubleClicked && (theEvent.type == NSLeftMouseUp) && (theEvent.clickCount == 2)) {
@@ -193,8 +189,6 @@ static const BRResizeRule rules[8] = {
             else {
                 self.areaRect = [self normalizedRect:rect];
             }
-            
-            NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.areaRect]);
         }
     }
 }
@@ -202,19 +196,11 @@ static const BRResizeRule rules[8] = {
 - (void)mouseEntered:(NSEvent *)theEvent
 {
     self.mouseEntered = YES;
-    
-    [self setNeedsDisplay:YES];
-    
-    NSLog(@"mouseEntered:");
 }
 
 - (void)mouseExited:(NSEvent *)theEvent
 {
     self.mouseEntered = NO;
-    
-    [self setNeedsDisplay:YES];
-    
-    NSLog(@"mouseExited:");
 }
 
 - (void)updateTrackingAreas
