@@ -13,7 +13,9 @@ NSString * const kBRSpecifyRectViewBindingRectangle     = @"rectangle";
 NSString * const kBRSpecifyRectViewBindingStartPoint    = @"startPoint";
 NSString * const kBRSpecifyRectViewBindingEndPoint      = @"endPoint";
 
-static const CGFloat kRectThickness = 3.0;
+static const CGFloat kKnobWidthInside   = 10.0;
+static const CGFloat kKnobWidthOutside  = 10.0;
+static const CGFloat kKnobWidth         = kKnobWidthInside + kKnobWidthOutside;
 
 
 @interface BRSpecifyRectView ()
@@ -206,22 +208,22 @@ static const CGFloat kRectThickness = 3.0;
 
 - (NSRect)topLeftKnobRect:(NSRect)frame
 {
-    return NSMakeRect(NSMinX(frame) - kRectThickness / 2, NSMinY(frame) - kRectThickness / 2, kRectThickness, kRectThickness);
+    return NSMakeRect(NSMinX(frame) - kKnobWidthOutside, NSMinY(frame) - kKnobWidthOutside, kKnobWidth, kKnobWidth);
 }
 
 - (NSRect)topRightKnobRect:(NSRect)frame
 {
-    return NSMakeRect(NSMaxX(frame) - kRectThickness / 2, NSMinY(frame) - kRectThickness / 2, kRectThickness, kRectThickness);
+    return NSMakeRect(NSMaxX(frame) - kKnobWidthOutside, NSMinY(frame) - kKnobWidthOutside, kKnobWidth, kKnobWidth);
 }
 
 - (NSRect)buttomLeftKnobRect:(NSRect)frame
 {
-    return NSMakeRect(NSMinX(frame) - kRectThickness / 2, NSMaxY(frame) - kRectThickness / 2, kRectThickness, kRectThickness);
+    return NSMakeRect(NSMinX(frame) - kKnobWidthOutside, NSMaxY(frame) - kKnobWidthOutside, kKnobWidth, kKnobWidth);
 }
 
 - (NSRect)buttomRightKnobRect:(NSRect)frame
 {
-    return NSMakeRect(NSMaxX(frame) - kRectThickness / 2, NSMaxY(frame) - kRectThickness / 2, kRectThickness, kRectThickness);
+    return NSMakeRect(NSMaxX(frame) - kKnobWidthOutside, NSMaxY(frame) - kKnobWidthOutside, kKnobWidth, kKnobWidth);
 }
 
 - (NSRect)topKnobRect:(NSRect)frame
