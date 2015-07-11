@@ -29,7 +29,7 @@
     
     NSSize size = self.originalImageView.frame.size;
     self.specifyRectAreaView = [[BRSpecifyRectAreaView alloc] initWithFrame:NSMakeRect(0.0, 0.0, size.width, size.height)];
-    self.specifyRectAreaView.specifyWholeAreaIfDoubleClicked = YES;
+    self.specifyRectAreaView.specifyWholeBoundsIfDoubleClicked = YES;
     [self.originalImageView addSubview:self.specifyRectAreaView];
     
     [self.window display];

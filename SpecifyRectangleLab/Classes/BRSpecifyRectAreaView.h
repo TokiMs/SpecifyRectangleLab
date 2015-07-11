@@ -17,9 +17,9 @@
 @property (nonatomic, assign) CGFloat   knobWidthInside;
 @property (nonatomic, assign) CGFloat   knobWidthOutside;
 
-@property (nonatomic, assign) BOOL      keepRectangleInsideView;
-@property (nonatomic, assign) BOOL      specifyWholeAreaIfDoubleClicked;
+@property (nonatomic, assign) BOOL      keepAreaInsideView;
+@property (nonatomic, assign) BOOL      specifyWholeBoundsIfDoubleClicked;
 
-@property (nonatomic, assign) NSRect    rectangle;
+@property (nonatomic, assign) NSRect    areaRect;
 
 @end
