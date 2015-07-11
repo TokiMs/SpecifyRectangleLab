@@ -12,6 +12,8 @@
 
 @property (nonatomic, assign) CGFloat   lineWidth;
 
+@property (nonatomic, assign) BOOL      keepRectangleInsideView;
+
 @property (nonatomic, assign) NSRect    rectangle;
 
 @end
