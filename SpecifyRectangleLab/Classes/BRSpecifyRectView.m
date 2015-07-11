@@ -114,7 +114,25 @@ static const BRResizeRule rules[8] = {
 {
     NSPoint point = [self convertPoint:theEvent.locationInWindow fromView:nil];
     BRKnobType knobType = [self knobTypeAtPoint:point];
-    if (knobType == kBRKnobTypeNone) {
+    
+    if (NSPointInRect(point, self.rectangle)) {
+        // move rectangle
+        NSRect rect = self.rectangle;
+        CGFloat dx = rect.origin.x - point.x;
+        CGFloat dy = rect.origin.y - point.y;
+        
+        while (theEvent.type != NSLeftMouseUp) {
+            theEvent = [self.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
+            point = [self convertPoint:theEvent.locationInWindow fromView:nil];
+            rect.origin.x = point.x + dx;
+            rect.origin.y = point.y + dy;
+            
+            self.rectangle = rect;
+            
+            NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.rectangle]);
+        }
+    }
+    else if (knobType == kBRKnobTypeNone) {
         // create rectangle
         NSPoint startPoint  = point;
         NSPoint endPoint    = point;
@@ -133,6 +151,7 @@ static const BRResizeRule rules[8] = {
         NSRect rect = self.rectangle;
         NSPoint prePoint;
         CGFloat dx, dy;
+        
         while (theEvent.type != NSLeftMouseUp) {
             prePoint = point;
             theEvent = [self.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
