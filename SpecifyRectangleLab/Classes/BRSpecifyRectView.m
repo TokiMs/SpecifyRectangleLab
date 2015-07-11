@@ -19,7 +19,6 @@ NSString * const kBRSpecifyRectViewBindingEndPoint      = @"endPoint";
 @property (nonatomic, assign) NSPoint   endPoint;
 //
 @property (nonatomic, strong) NSTrackingArea *  trackingArea;
-@property (nonatomic, assign) BOOL  mousePressed;
 @property (nonatomic, assign) BOOL  mouseEntered;
 @end
 
@@ -40,7 +39,6 @@ NSString * const kBRSpecifyRectViewBindingEndPoint      = @"endPoint";
 //        self.alphaValue = 0.5f;
         
         self.trackingArea   = nil;
-        self.mousePressed   = NO;
         self.mouseEntered   = NO;
         
         // observe
@@ -94,34 +92,19 @@ NSString * const kBRSpecifyRectViewBindingEndPoint      = @"endPoint";
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-    self.mousePressed = YES;
-    
-    self.startPoint = [self convertPoint:theEvent.locationInWindow fromView:[[self window] contentView]];
-    self.endPoint = self.startPoint;
-    
-    [self setNeedsDisplay:YES];
-    
-    NSLog(@"mouseDown: %@, %@", [NSValue valueWithPoint:self.startPoint], [NSValue valueWithPoint:self.endPoint]);
-}
-
-- (void)mouseUp:(NSEvent *)theEvent
-{
-    self.mousePressed = NO;
-    
-    self.endPoint = [self convertPoint:theEvent.locationInWindow fromView:[[self window] contentView]];
-    
-    [self setNeedsDisplay:YES];
-    
-    NSLog(@"mouseUp: %@, %@", [NSValue valueWithPoint:self.startPoint], [NSValue valueWithPoint:self.endPoint]);
-}
-
-- (void)mouseDragged:(NSEvent *)theEvent
-{
-    self.endPoint = [self convertPoint:theEvent.locationInWindow fromView:[[self window] contentView]];
-    
-    [self setNeedsDisplay:YES];
-    
-    NSLog(@"mouseDragged: %@, %@", [NSValue valueWithPoint:self.startPoint], [NSValue valueWithPoint:self.endPoint]);
+    NSPoint startPoint = [self convertPoint:theEvent.locationInWindow fromView:[[self window] contentView]];
+    NSPoint endPoint = startPoint;
+    while (theEvent.type != NSLeftMouseUp) {
+        theEvent = [self.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
+        endPoint = [self convertPoint:theEvent.locationInWindow fromView:[[self window] contentView]];
+        
+        self.startPoint = startPoint;
+        self.endPoint = endPoint;
+        
+        [self setNeedsDisplay:YES];
+        
+        NSLog(@"mouseDown: %@, %@", [NSValue valueWithPoint:self.startPoint], [NSValue valueWithPoint:self.endPoint]);
+    }
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent
@@ -150,14 +133,12 @@ NSString * const kBRSpecifyRectViewBindingEndPoint      = @"endPoint";
     }
     
     // add
-    if (self.mousePressed == NO) {
-        NSTrackingAreaOptions options = (NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingEnabledDuringMouseDrag);
-        self.trackingArea = [[NSTrackingArea alloc] initWithRect:self.rectangle
-                                                         options:options
-                                                           owner:self
-                                                        userInfo:nil];
-        [self addTrackingArea:self.trackingArea];
-    }
+    NSTrackingAreaOptions options = (NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingEnabledDuringMouseDrag);
+    self.trackingArea = [[NSTrackingArea alloc] initWithRect:self.rectangle
+                                                     options:options
+                                                       owner:self
+                                                    userInfo:nil];
+    [self addTrackingArea:self.trackingArea];
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
