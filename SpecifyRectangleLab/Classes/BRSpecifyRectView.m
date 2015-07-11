@@ -130,6 +130,7 @@ static const BRResizeRule rules[8] = {
     }
     else {
         // expansion/reduction rectangle
+        NSRect rect = self.rectangle;
         NSPoint prePoint;
         CGFloat dx, dy;
         while (theEvent.type != NSLeftMouseUp) {
@@ -141,12 +142,12 @@ static const BRResizeRule rules[8] = {
             
             BRResizeRule rule = rules[knobType];
             
-            NSRect rect = self.rectangle;
             rect.origin.x       += dx * rule.x;
             rect.origin.y       += dy * rule.y;
             rect.size.width     += dx * rule.w;
             rect.size.height    += dy * rule.h;
-            self.rectangle = rect;
+            
+            self.rectangle = [self normalizedRect:rect];
             
             NSLog(@"mouseDown: %@", [NSValue valueWithRect:self.rectangle]);
         }
@@ -327,6 +328,22 @@ static const BRResizeRule rules[8] = {
     rect.size   = size;
     
     return rect;
+}
+
+- (NSRect)normalizedRect:(NSRect)rect
+{
+    NSRect newRect = rect;
+    
+    if (rect.size.width < 0) {
+        newRect.origin.x = rect.origin.x + rect.size.width;
+        newRect.size.width = -rect.size.width;
+    }
+    if (rect.size.height < 0) {
+        newRect.origin.y = rect.origin.y + rect.size.height;
+        newRect.size.height = -rect.size.height;
+    }
+    
+    return newRect;
 }
 
 @end
