@@ -56,6 +56,7 @@ static const BRResizeRule rules[8] = {
     self = [super initWithFrame:frame];
     if (self) {
         self.lineWidth          = 1.0;
+        self.lineDash           = 3.0;
         self.lineAlpha          = 0.6;
         self.knobWidthInside    = 10.0;
         self.knobWidthOutside   = 10.0;
@@ -351,13 +352,13 @@ static const BRResizeRule rules[8] = {
     [bezierPath setLineWidth:self.lineWidth];
     
     // set the line dash pattern
-    CGFloat lineDash[] = {3.0, 3.0};
+    CGFloat lineDash[] = {self.lineDash, self.lineDash};
     // draw line
     [[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:self.lineAlpha] set];
     [bezierPath setLineDash:lineDash count:2 phase:0.0];
     [bezierPath stroke];
     [[NSColor colorWithDeviceRed:1.0 green:1.0 blue:1.0 alpha:self.lineAlpha] set];
-    [bezierPath setLineDash:lineDash count:2 phase:3.0];
+    [bezierPath setLineDash:lineDash count:2 phase:self.lineDash];
     [bezierPath stroke];
     
     [ctx restoreGraphicsState];

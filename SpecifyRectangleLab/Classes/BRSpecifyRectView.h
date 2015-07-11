@@ -11,6 +11,7 @@
 @interface BRSpecifyRectView : NSView
 
 @property (nonatomic, assign) CGFloat   lineWidth;
+@property (nonatomic, assign) CGFloat   lineDash;
 @property (nonatomic, assign) CGFloat   lineAlpha;
 @property (nonatomic, assign) CGFloat   knobWidthInside;
 @property (nonatomic, assign) CGFloat   knobWidthOutside;
