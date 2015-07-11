@@ -81,8 +81,9 @@ static const BRResizeRule rules[8] = {
     [self discardCursorRects];
     
 #if !__has_feature(objc_arc)
+    self.lineColors = nil;
     self.trackingArea = nil;
-    [self dealloc];
+    [super dealloc];
 #endif
 }
 
@@ -145,7 +146,7 @@ static const BRResizeRule rules[8] = {
     else if (knobType == kBRKnobTypeNone) {
         // create rectangle
         NSPoint startPoint  = point;
-        NSPoint endPoint    = point;
+        NSPoint endPoint;
         
         while (theEvent.type != NSLeftMouseUp) {
             theEvent = [self.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
@@ -225,11 +226,17 @@ static const BRResizeRule rules[8] = {
     
     // add
     NSTrackingAreaOptions options = (NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingEnabledDuringMouseDrag);
-    self.trackingArea = [[NSTrackingArea alloc] initWithRect:self.rectangle
-                                                     options:options
-                                                       owner:self
-                                                    userInfo:nil];
-    [self addTrackingArea:self.trackingArea];
+    NSTrackingArea * trackingArea = [[NSTrackingArea alloc] initWithRect:self.rectangle
+                                                                 options:options
+                                                                   owner:self
+                                                                userInfo:nil];
+#if !__has_feature(objc_arc)
+    [trackingArea autorelease];
+#endif
+    [self addTrackingArea:trackingArea];
+    self.trackingArea = trackingArea;
+    
+    [super updateTrackingAreas];
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
