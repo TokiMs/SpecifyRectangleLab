@@ -152,7 +152,7 @@ static const BRResizeRule rules[8] = {
             
             NSRect rect = [self rectFromPoint:startPoint point:endPoint];
             if (self.keepRectangleInsideView) {
-                self.rectangle = NSIntersectionRect(rect, self.frame);
+                self.rectangle = NSIntersectionRect(rect, self.bounds);
             }
             else {
                 self.rectangle = rect;
@@ -182,7 +182,7 @@ static const BRResizeRule rules[8] = {
             rect.size.height    += dy * rule.h;
             
             if (self.keepRectangleInsideView) {
-                self.rectangle = NSIntersectionRect([self normalizedRect:rect], self.frame);
+                self.rectangle = NSIntersectionRect([self normalizedRect:rect], self.bounds);
             }
             else {
                 self.rectangle = [self normalizedRect:rect];
@@ -398,19 +398,19 @@ static const BRResizeRule rules[8] = {
     NSRect newRect = [self normalizedRect:rect];
     CGFloat dx, dy;
     
-    dx = NSMinX(newRect) - NSMinX(self.frame);
+    dx = NSMinX(newRect) - NSMinX(self.bounds);
     if (dx < 0) {
         newRect = NSOffsetRect(newRect, -dx, 0.0);
     }
-    dx = NSMaxX(newRect) - NSMaxX(self.frame);
+    dx = NSMaxX(newRect) - NSMaxX(self.bounds);
     if (dx > 0) {
         newRect = NSOffsetRect(newRect, -dx, 0.0);
     }
-    dy = NSMinY(newRect) - NSMinY(self.frame);
+    dy = NSMinY(newRect) - NSMinY(self.bounds);
     if (dy < 0) {
         newRect = NSOffsetRect(newRect, 0.0, -dy);
     }
-    dy = NSMaxY(newRect) - NSMaxY(self.frame);
+    dy = NSMaxY(newRect) - NSMaxY(self.bounds);
     if (dy > 0) {
         newRect = NSOffsetRect(newRect, 0.0, -dy);
     }
